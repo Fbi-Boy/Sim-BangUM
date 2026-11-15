@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @include('layouts.ui')
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +58,7 @@ button, input, select, textarea { font-family: inherit; }
 body.dark-mode .btn-icon .i-sun { display: block; }
 body.dark-mode .btn-icon .i-moon { display: none; }
 
-/* ===== TOMBOL BAHASA (menampilkan bahasa aktif) ===== */
+/* ===== TOMBOL BAHASA ===== */
 .lang-box { position: relative; }
 .lang-btn {
     height: 42px; padding: 0 12px 0 10px; border-radius: 12px; border: 1px solid transparent; background: var(--bg-soft);
@@ -145,15 +146,13 @@ td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border
 tr:hover td { background: var(--bg-hover); }
 .btn { display: inline-block; padding: 8px 14px; background: #2563eb; color: #fff; border: none; border-radius: 10px; cursor: pointer; text-decoration: none; font-size: 13px; font-weight: 500; }
 
-/* Loading bar di atas (indikator navigasi) */
+/* Loading bar di atas */
 #nprogress-bar {
     position: fixed; top: 0; left: 0; height: 3px; width: 0%;
     background: var(--accent); z-index: 9999; transition: width 0.3s ease;
 }
 
-/* === RTL SUPPORT (Bahasa Arab) ===
-   direction:rtl pada body otomatis membalik .wrap (sidebar pindah ke kanan,
-   konten ke kiri), urutan topbar, tabel, form, dan teks. */
+/* === RTL SUPPORT === */
 body[dir="rtl"] { direction: rtl; text-align: right; }
 body[dir="rtl"] #nprogress-bar { left: auto; right: 0; }
 body[dir="rtl"] .topbar-left { text-align: right; }
@@ -206,19 +205,19 @@ body[dir="rtl"] .sidebar { border-right: none; border-left: 1px solid var(--bord
                     <div class="lang-menu" role="menu" data-no-i18n>
                         <button type="button" class="lang-item" data-lang="id" onclick="setLanguage('id')">
                             <span class="lang-code c-id">ID</span><span class="lang-name">Indonesia</span>
-                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg>
                         </button>
                         <button type="button" class="lang-item" data-lang="en" onclick="setLanguage('en')">
                             <span class="lang-code c-en">EN</span><span class="lang-name">English</span>
-                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg>
                         </button>
                         <button type="button" class="lang-item" data-lang="ar" onclick="setLanguage('ar')">
                             <span class="lang-code c-ar">AR</span><span class="lang-name">العربية</span>
-                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg>
                         </button>
                         <button type="button" class="lang-item" data-lang="zh" onclick="setLanguage('zh')">
                             <span class="lang-code c-zh">ZH</span><span class="lang-name">中文 (China)</span>
-                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                            <svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg>
                         </button>
                     </div>
                 </div>
@@ -271,46 +270,35 @@ body[dir="rtl"] .sidebar { border-right: none; border-left: 1px solid var(--bord
 
 <script>
 /* =====================================================================
-   SISTEM MULTI-BAHASA (i18n)
-   - Teks di aplikasi ditulis dalam Bahasa Indonesia (bahasa asli).
-   - Kamus di bawah memetakan teks Indonesia -> [English, العربية, 中文].
-   - Semua teks (termasuk sidebar, tabel, tombol, placeholder, dan konten
-     yang dimuat lewat SPA/AJAX) diterjemahkan otomatis.
-   - Untuk menambah teks baru cukup tambahkan ke kamus, atau dari halaman
-     mana pun panggil:  I18N.extend({ 'Teks Indonesia': ['English','العربية','中文'] });
-   - Tambahkan atribut data-no-i18n pada elemen yang TIDAK boleh diterjemahkan
-     (mis. nama orang, nomor surat).
+   SISTEM MULTI-BAHASA (i18n) + AUTO-TRANSLATE SERVER
    ===================================================================== */
 window.I18N = (function () {
     var DICT = {
-        // --- Umum / navigasi ---
         'Dashboard': ['Dashboard', 'لوحة التحكم', '仪表板'],
-        'Beranda': ['Home', 'الرئيسية', '首页'],
         'Menu': ['Menu', 'القائمة', '菜单'],
-        'Menu Utama': ['Main Menu', 'القائمة الرئيسية', '主菜单'],
         'Keluar': ['Logout', 'تسجيل الخروج', '退出'],
-        'Masuk': ['Login', 'تسجيل الدخول', '登录'],
+        'Simpan': ['Save', 'حفظ', '保存'],
+        'Batal': ['Cancel', 'إلغاء', '取消'],
+        'Tambah Data': ['Add Data', 'إضافة بيانات', '添加数据'],
+        'Cari': ['Search', 'بحث', '搜索'],
+        'Menunggu': ['Pending', 'قيد الانتظار', '待处理'],
+        'Disetujui': ['Approved', 'تمت الموافقة', '已批准'],
+        'Ditolak': ['Rejected', 'مرفوض', '已拒绝'],
         'Tanpa role': ['No role', 'بدون دور', '无角色'],
-        'Ubah Bahasa': ['Change language', 'تغيير اللغة', '切换语言'],
-        'Ubah tema': ['Change theme', 'تغيير المظهر', '切换主题'],
         'Pemda · Bagian Umum': ['Local Government · General Affairs', 'الحكومة المحلية · الشؤون العامة', '地方政府 · 总务部'],
-
-        // --- Modul umum ---
-        'Pengguna': ['Users', 'المستخدمون', '用户'],
-        'Manajemen Pengguna': ['User Management', 'إدارة المستخدمين', '用户管理'],
-        'Peran': ['Roles', 'الأدوار', '角色'],
-        'Role': ['Role', 'الدور', '角色'],
-        'Hak Akses': ['Permissions', 'الصلاحيات', '权限'],
-        'Pengaturan': ['Settings', 'الإعدادات', '设置'],
-        'Profil': ['Profile', 'الملف الشخصي', '个人资料'],
-        'Laporan': ['Reports', 'التقارير', '报告'],
-        'Data Master': ['Master Data', 'البيانات الرئيسية', '主数据'],
         'Surat Masuk': ['Incoming Mail', 'البريد الوارد', '收文'],
         'Surat Keluar': ['Outgoing Mail', 'البريد الصادر', '发文'],
         'Disposisi': ['Disposition', 'التوجيه', '批示'],
         'Arsip': ['Archive', 'الأرشيف', '档案'],
         'Inventaris': ['Inventory', 'المخزون', '库存'],
         'Aset': ['Assets', 'الأصول', '资产'],
+        'Laporan': ['Reports', 'التقارير', '报告'],
+        'Pengaturan': ['Settings', 'الإعدادات', '设置'],
+        'Profil': ['Profile', 'الملف الشخصي', '个人资料'],
+        'Pengguna': ['Users', 'المستخدمون', '用户'],
+        'Peran': ['Roles', 'الأدوار', '角色'],
+        'Hak Akses': ['Permissions', 'الصلاحيات', '权限'],
+        'Data Master': ['Master Data', 'البيانات الرئيسية', '主数据'],
         'Pegawai': ['Employees', 'الموظفون', '员工'],
         'Jabatan': ['Position', 'المنصب', '职位'],
         'Unit Kerja': ['Work Unit', 'وحدة العمل', '工作单位'],
@@ -320,8 +308,6 @@ window.I18N = (function () {
         'Riwayat': ['History', 'السجل', '历史'],
         'Notifikasi': ['Notifications', 'الإشعارات', '通知'],
         'Bantuan': ['Help', 'مساعدة', '帮助'],
-
-        // --- Tabel & kolom ---
         'No': ['No', 'م', '序号'],
         'No.': ['No.', 'رقم', '编号'],
         'Nama': ['Name', 'الاسم', '姓名'],
@@ -349,14 +335,9 @@ window.I18N = (function () {
         'Harga': ['Price', 'السعر', '价格'],
         'Dibuat': ['Created', 'تاريخ الإنشاء', '创建时间'],
         'Diperbarui': ['Updated', 'تاريخ التحديث', '更新时间'],
-
-        // --- Tombol & aksi ---
         'Tambah': ['Add', 'إضافة', '添加'],
-        'Tambah Data': ['Add Data', 'إضافة بيانات', '添加数据'],
         'Tambah Baru': ['Add New', 'إضافة جديد', '新增'],
-        'Simpan': ['Save', 'حفظ', '保存'],
         'Simpan Perubahan': ['Save Changes', 'حفظ التغييرات', '保存更改'],
-        'Batal': ['Cancel', 'إلغاء', '取消'],
         'Hapus': ['Delete', 'حذف', '删除'],
         'Edit': ['Edit', 'تعديل', '编辑'],
         'Ubah': ['Edit', 'تعديل', '修改'],
@@ -365,7 +346,6 @@ window.I18N = (function () {
         'Kembali': ['Back', 'رجوع', '返回'],
         'Tutup': ['Close', 'إغلاق', '关闭'],
         'Kirim': ['Send', 'إرسال', '发送'],
-        'Cari': ['Search', 'بحث', '搜索'],
         'Cari...': ['Search...', 'بحث...', '搜索...'],
         'Filter': ['Filter', 'تصفية', '筛选'],
         'Reset': ['Reset', 'إعادة تعيين', '重置'],
@@ -382,17 +362,10 @@ window.I18N = (function () {
         'Tolak': ['Reject', 'رفض', '拒绝'],
         'Selesai': ['Done', 'منتهي', '完成'],
         'Lanjut': ['Next', 'التالي', '继续'],
-
-        // --- Status ---
         'Aktif': ['Active', 'نشط', '启用'],
         'Nonaktif': ['Inactive', 'غير نشط', '停用'],
-        'Menunggu': ['Pending', 'قيد الانتظار', '待处理'],
         'Diproses': ['Processing', 'قيد المعالجة', '处理中'],
-        'Disetujui': ['Approved', 'تمت الموافقة', '已批准'],
-        'Ditolak': ['Rejected', 'مرفوض', '已拒绝'],
         'Baru': ['New', 'جديد', '新'],
-
-        // --- Pesan & pagination ---
         'Tidak ada data': ['No data available', 'لا توجد بيانات', '暂无数据'],
         'Data tidak ditemukan': ['No data found', 'لم يتم العثور على بيانات', '未找到数据'],
         'Memuat...': ['Loading...', 'جارٍ التحميل...', '加载中...'],
@@ -412,26 +385,36 @@ window.I18N = (function () {
     var IDX = { en: 0, ar: 1, zh: 2 };
     var LOWER = {};
     var cur = 'id';
-    var textStore = new WeakMap();   // text node  -> {orig, set}
-    var attrStore = new WeakMap();   // element    -> {attr: {orig, set}}
+    var textStore = new WeakMap();
+    var attrStore = new WeakMap();
     var ATTRS = ['placeholder', 'title', 'aria-label', 'alt', 'data-short'];
     var SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, NOSCRIPT: 1, CODE: 1, PRE: 1 };
     var observer = null, pending = false, applying = false;
 
+    var MISSING = {}, TRIED = {}, fetching = false;
+
     function rebuildLower() { LOWER = {}; Object.keys(DICT).forEach(function (k) { LOWER[k.toLowerCase()] = DICT[k]; }); }
-    // Gabungkan kamus tambahan dari komponen lain (mis. sidebar)
     if (window.I18N_EXTRA) Object.keys(window.I18N_EXTRA).forEach(function (k) { DICT[k] = window.I18N_EXTRA[k]; });
     rebuildLower();
 
     function norm(s) { return s.replace(/\s+/g, ' ').trim(); }
     function lookup(s) { var k = norm(s); if (!k) return null; return DICT[k] || LOWER[k.toLowerCase()] || null; }
+
     function translate(orig, lang) {
         if (lang === 'id') return orig;
+        var k = norm(orig);
         var hit = lookup(orig);
-        if (!hit) return orig;
-        var t = hit[IDX[lang]];
-        if (!t) return orig;
-        var m = orig.match(/^(\s*)[\s\S]*?(\s*)$/);   // pertahankan spasi awal/akhir
+        var t = hit ? hit[IDX[lang]] : null;
+
+        if (!t) {
+            // Jika tidak ada di kamus, catat untuk diterjemahkan ke server (hanya jika ada huruf)
+            if (k && /\p{L}/u.test(k) && k.length <= 1000 && k.length > 2 && !(TRIED[lang] && TRIED[lang][k])) {
+                MISSING[lang] = MISSING[lang] || {};
+                MISSING[lang][k] = 1;
+            }
+            return orig;
+        }
+        var m = orig.match(/^(\s*)[\s\S]*?(\s*)$/);
         return (m ? m[1] : '') + t + (m ? m[2] : '');
     }
 
@@ -445,20 +428,20 @@ window.I18N = (function () {
 
     function applyTo(root, lang) {
         if (!root) return;
-        // 1) text nodes
         var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
         var n, nodes = [];
         while ((n = walker.nextNode())) nodes.push(n);
+
         nodes.forEach(function (node) {
             if (!node.data.trim() || skipNode(node.parentNode)) return;
             var rec = textStore.get(node);
-            if (!rec || node.data !== rec.set) rec = { orig: node.data, set: node.data }; // teks baru dari server/JS
+            if (!rec || node.data !== rec.set) rec = { orig: node.data, set: node.data };
             var out = translate(rec.orig, lang);
             rec.set = out;
             textStore.set(node, rec);
             if (node.data !== out) node.data = out;
         });
-        // 2) atribut (placeholder, title, dst) & tombol submit
+
         var els = root.nodeType === 1 ? [root] : [];
         var q = root.querySelectorAll ? root.querySelectorAll('[placeholder],[title],[aria-label],[alt],[data-short],input[type=submit],input[type=button]') : [];
         els = els.concat(Array.prototype.slice.call(q));
@@ -480,21 +463,13 @@ window.I18N = (function () {
         });
     }
 
-    var titleOrig = null, titleSet = null;
-    function applyTitle(lang) {
-        if (titleOrig === null || document.title !== titleSet) titleOrig = document.title;
-        var parts = titleOrig.split(' — ');
-        parts[0] = translate(parts[0], lang);
-        titleSet = parts.join(' — ');
-        if (document.title !== titleSet) document.title = titleSet;
-    }
-
     function run(root) {
         applying = true;
         if (observer) observer.disconnect();
-        try { applyTo(root || document.body, cur); applyTitle(cur); } catch (e) { console.error(e); }
+        try { applyTo(root || document.body, cur); } catch (e) { console.error(e); }
         startObserver();
         applying = false;
+        fetchMissing();
     }
 
     function startObserver() {
@@ -506,6 +481,59 @@ window.I18N = (function () {
             });
         }
         observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
+
+    // ===== FUNGSI AJAX KE SERVER =====
+    function fetchMissing() {
+        var lang = cur;
+        if (lang === 'id' || fetching) return;
+
+        var list = Object.keys(MISSING[lang] || {});
+        if (list.length === 0) return;
+
+        var chunk = list.slice(0, 50); // Maksimal 50 teks per request
+        fetching = true;
+
+        var tk = document.querySelector('meta[name="csrf-token"]');
+        var token = tk ? tk.content : '';
+
+        fetch('/translate-batch', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ lang: lang, texts: chunk })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+            TRIED[lang] = TRIED[lang] || {};
+            chunk.forEach(function(k){
+                delete MISSING[lang][k];
+                TRIED[lang][k] = 1;
+            });
+
+            var newDict = {};
+            var tr = res.translations || {};
+            Object.keys(tr).forEach(function (orig) {
+                var arr = ['', '', ''];
+                arr[IDX[lang]] = tr[orig];
+                newDict[orig] = arr;
+            });
+            I18N.extend(newDict);
+
+            fetching = false;
+            // Jika masih ada sisa teks, lanjut translate setelah 1 detik
+            if (Object.keys(MISSING[lang] || {}).length > 0) {
+                setTimeout(fetchMissing, 1000);
+            }
+        })
+        .catch(function () {
+            chunk.forEach(function(k){ TRIED[lang][k] = 1; });
+            fetching = false;
+        });
     }
 
     var LOCALES = { id: 'id-ID', en: 'en-US', ar: 'ar-EG', zh: 'zh-CN' };
@@ -530,6 +558,7 @@ window.I18N = (function () {
         document.querySelectorAll('.lang-item').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-lang') === lang); });
 
         updateDate();
+        TRIED = {}; // Reset agar bisa fetch ulang jika ada update
         run(document.body);
         window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: lang, rtl: rtl } }));
     }
@@ -549,23 +578,29 @@ window.I18N = (function () {
 
 // ========== THEME & LANGUAGE ==========
 function toggleTheme() { var dark = document.body.classList.toggle('dark-mode'); try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {} }
-function setLanguage(lang) { langBox.classList.remove('open'); I18N.set(lang); }
+function setLanguage(lang) {
+    var langBox = document.getElementById('langBox');
+    if(langBox) langBox.classList.remove('open');
+    I18N.set(lang);
+}
+
 var langBox = document.getElementById('langBox');
-document.getElementById('langBtn').addEventListener('click', function (e) { e.stopPropagation(); langBox.classList.toggle('open'); });
-document.addEventListener('click', function (e) { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
-(function () { var box = document.getElementById('userBox'); var btn = document.getElementById('userBtn'); btn.addEventListener('click', function (e) { e.stopPropagation(); box.classList.toggle('open'); }); document.addEventListener('click', function (e) { if (!box.contains(e.target)) box.classList.remove('open'); }); })();
+if(langBox) {
+    document.getElementById('langBtn').addEventListener('click', function (e) { e.stopPropagation(); langBox.classList.toggle('open'); });
+}
+document.addEventListener('click', function (e) { if (langBox && !langBox.contains(e.target)) langBox.classList.remove('open'); });
+(function () { var box = document.getElementById('userBox'); if(!box) return; var btn = document.getElementById('userBtn'); btn.addEventListener('click', function (e) { e.stopPropagation(); box.classList.toggle('open'); }); document.addEventListener('click', function (e) { if (!box.contains(e.target)) box.classList.remove('open'); }); })();
+
 I18N.init();
 
 // ========== PROGRESS BAR ==========
 window.showProgress = function() {
     var bar = document.getElementById('nprogress-bar');
-    bar.style.width = '30%';
-    setTimeout(function() { bar.style.width = '70%'; }, 200);
+    if(bar) { bar.style.width = '30%'; setTimeout(function() { bar.style.width = '70%'; }, 200); }
 };
 window.hideProgress = function() {
     var bar = document.getElementById('nprogress-bar');
-    bar.style.width = '100%';
-    setTimeout(function() { bar.style.width = '0%'; }, 300);
+    if(bar) { bar.style.width = '100%'; setTimeout(function() { bar.style.width = '0%'; }, 300); }
 };
 
 // ========== RE-EXECUTE SCRIPTS AFTER SPA NAVIGATION ==========
@@ -592,7 +627,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var url = new URL(link.href);
         if (url.origin !== window.location.origin) return;
 
-        // Cegat hanya link di sidebar & topbar (bukan tombol aksi tabel)
         if (link.closest('.sidebar') || link.closest('.topbar') || link.classList.contains('quick-card')) {
             e.preventDefault();
             navigateTo(url.href);
@@ -631,9 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (pushState) window.history.pushState({}, '', url);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                // Jalankan script di dalam konten baru
                 runScripts(content);
-                // Terjemahkan konten baru sesuai bahasa terpilih
                 I18N.apply(document.body);
             } else {
                 window.location.href = url;
@@ -684,7 +716,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 container.style.pointerEvents = 'auto';
                 window.history.pushState({}, '', url);
 
-                // Jalankan script di dalam tabel baru (search/filter)
                 runScripts(container);
                 I18N.apply(container);
             }
@@ -698,61 +729,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     };
 });
-   // Fungsi untuk menerjemahkan teks dinamis dari database
-    async function translateDynamicTexts(lang) {
-        if (lang === 'id') {
-            // Reload halaman untuk kembali ke bahasa asli (opsional)
-            // window.location.reload();
-            return;
-        }
-
-        let elements = document.querySelectorAll('[data-translate]');
-        let textsToTranslate = new Set();
-
-        // Kumpulkan teks yang belum ada di cache browser
-        elements.forEach(el => {
-            let text = el.innerText.trim();
-            if (text && !el.dataset.translated) {
-                textsToTranslate.add(text);
-            }
-        });
-
-        let textsArray = Array.from(textsToTranslate).slice(0, 50); // Maks 50 teks per request
-        if (textsArray.length === 0) return;
-
-        try {
-            let response = await fetch('/translate-batch', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ lang: lang, texts: textsArray })
-            });
-
-            let data = await response.json();
-
-            if (data.translations) {
-                // Ganti teks di layar
-                elements.forEach(el => {
-                    let original = el.innerText.trim();
-                    if (data.translations[original]) {
-                        el.innerText = data.translations[original];
-                        el.dataset.translated = 'true'; // Tandai sudah diterjemahkan
-                    }
-                });
-            }
-        } catch (error) {
-            console.error('Error translate:', error);
-        }
-    }
-
-    // Panggil fungsi ini saat bahasa diganti (integrasikan dengan tombol bahasa lo)
-    // Contoh: setelah setLanguage('en') dijalankan, panggil translateDynamicTexts('en');
-    window.addEventListener('languageChanged', function() {
-        let currentLang = localStorage.getItem('lang') || 'id';
-        translateDynamicTexts(currentLang);
-    });
 </script>
 </body>
 </html>
