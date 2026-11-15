@@ -273,10 +273,83 @@ $icons = [
         color: var(--sb-muted); padding: 2px 8px 8px;
     }
 
+    /* ================= RTL (Bahasa Arab): sidebar pindah ke kanan & semua elemen dicerminkan ================= */
+    body[dir="rtl"] .sidebar { border-right: none; border-left: 1px solid var(--border-color, #e6e9f2); }
+    body[dir="rtl"] .sb-toggle { margin-left: 0; margin-right: auto; transform: rotate(180deg); }
+    body[dir="rtl"] .sidebar.collapsed .sb-toggle { margin-right: 0; transform: none; }
+    body[dir="rtl"] .sb-group-btn { text-align: right; }
+    body[dir="rtl"] .sb-sub-inner { margin: 0 21px 0 0; padding: 0 14px 0 0; }
+    body[dir="rtl"] .sb-sub-inner::before { left: auto; right: 0; }
+    body[dir="rtl"] .sb-subitem { padding: 9px 28px 9px 12px; transform: translateX(6px); }
+    body[dir="rtl"] .sb-group.open .sb-subitem { transform: none; }
+    body[dir="rtl"] .sb-subitem::before { left: auto; right: 12px; }
+    body[dir="rtl"] .sb-subitem.active::after { left: auto; right: -14px; }
+    body[dir="rtl"] .sidebar.collapsed .sb-sub { transform: translateX(6px); }
+    body[dir="rtl"] .sidebar.collapsed .sb-group.fly .sb-sub { transform: none; }
+    body[dir="rtl"] .sidebar.collapsed .sb-sub-inner { margin: 0 8px 0 0; padding: 0 14px 0 0; }
+    body[dir="rtl"] .sidebar.collapsed .sb-sub-inner::before { left: auto; right: 0; }
+    body[dir="rtl"] .sidebar.collapsed .sb-subitem { transform: none; }
+
     @media (prefers-reduced-motion: reduce) {
         .sidebar, .sidebar * , .sidebar *::before { transition: none !important; }
     }
 </style>
+
+<!-- Kamus terjemahan sidebar (Indonesia -> English, العربية, 中文). Dibaca oleh I18N di layout utama. -->
+<script>
+window.I18N_EXTRA = Object.assign(window.I18N_EXTRA || {}, {
+    // Judul bagian (sidebar) + versi pendek saat sidebar diciutkan
+    'Menu Utama':        ['Main Menu', 'القائمة الرئيسية', '主菜单'],
+    'Modul':             ['Modules', 'الوحدات', '模块'],
+    'Akun':              ['Account', 'الحساب', '账户'],
+
+    // Judul grup
+    'Tugas & Persetujuan': ['Tasks & Approvals', 'المهام والموافقات', '任务与审批'],
+    'Persuratan':        ['Correspondence', 'المراسلات', '公文管理'],
+    'BMD':               ['Regional Assets', 'ممتلكات الإقليم', '地方资产'],
+    'Kendaraan':         ['Vehicles', 'المركبات', '车辆'],
+    'Fasilitas':         ['Facilities', 'المرافق', '设施'],
+    'Protokol':          ['Protocol', 'المراسم', '礼宾'],
+    'Travel':            ['Travel', 'السفر', '差旅'],
+    'Pengajuan Saya':    ['My Requests', 'طلباتي', '我的申请'],
+    'Administrasi':      ['Administration', 'الإدارة', '行政管理'],
+
+    // Item menu
+    'Disposisi Saya':    ['My Dispositions', 'توجيهاتي', '我的批示'],
+    'Tugas Saya':        ['My Tasks', 'مهامي', '我的任务'],
+    'Inbox Persetujuan': ['Approval Inbox', 'صندوق الموافقات', '审批收件箱'],
+    'Laporan Auditor':   ['Auditor Reports', 'تقارير المدقق', '审计报告'],
+    'Daftar Arsip':      ['Archive List', 'قائمة الأرشيف', '档案清单'],
+    'Klasifikasi':       ['Classification', 'التصنيف', '分类'],
+    'Peminjaman':        ['Loans', 'الإعارة', '借用'],
+    'Item ATK':          ['Stationery Items', 'مواد القرطاسية', '文具物品'],
+    'Permintaan ATK':    ['Stationery Requests', 'طلبات القرطاسية', '文具申请'],
+    'Data BMD':          ['Regional Asset Data', 'بيانات ممتلكات الإقليم', '地方资产数据'],
+    'Permohonan':        ['Requests', 'الطلبات', '申请'],
+    'Ruangan':           ['Rooms', 'القاعات', '房间'],
+    'Booking':           ['Booking', 'الحجز', '预订'],
+    'Kegiatan':          ['Events', 'الفعاليات', '活动'],
+    'Pinjam Aset':       ['Borrow Assets', 'استعارة الأصول', '借用资产'],
+    'Minta ATK':         ['Request Stationery', 'طلب القرطاسية', '申领文具'],
+    'Booking Ruangan':   ['Room Booking', 'حجز القاعات', '会议室预订'],
+    'Perjalanan Dinas':  ['Official Travel', 'السفر الرسمي', '公务出差'],
+    'Kelola User':       ['Manage Users', 'إدارة المستخدمين', '管理用户'],
+    'Kelola Role':       ['Manage Roles', 'إدارة الأدوار', '管理角色'],
+    'Audit Log':         ['Audit Log', 'سجل التدقيق', '审计日志'],
+
+    // Kontrol sidebar
+    'Navigasi utama':             ['Main navigation', 'التنقل الرئيسي', '主导航'],
+    'Cari menu':                  ['Search menu', 'بحث في القائمة', '搜索菜单'],
+    'Cari menu...':               ['Search menu...', 'ابحث في القائمة...', '搜索菜单...'],
+    'Menu tidak ditemukan':       ['Menu not found', 'لم يتم العثور على القائمة', '未找到菜单'],
+    'Ciutkan sidebar':            ['Collapse sidebar', 'طيّ الشريط الجانبي', '收起侧边栏'],
+    'Lebarkan sidebar':           ['Expand sidebar', 'توسيع الشريط الجانبي', '展开侧边栏'],
+    'Ciutkan / lebarkan sidebar': ['Collapse / expand sidebar', 'طيّ / توسيع الشريط الجانبي', '收起 / 展开侧边栏'],
+    'Buka semua grup':            ['Open all groups', 'فتح كل المجموعات', '展开所有分组'],
+    'Tutup semua grup':           ['Close all groups', 'إغلاق كل المجموعات', '收起所有分组'],
+    'Buka / tutup semua grup':    ['Open / close all groups', 'فتح / إغلاق كل المجموعات', '展开 / 收起所有分组']
+});
+</script>
 
 <aside class="sidebar" aria-label="Navigasi utama">
     <!-- BRAND -->
@@ -288,7 +361,7 @@ $icons = [
             </svg>
         </div>
         <div class="sb-brand-text">
-            <div class="sidebar-brand-title">SIM-<span>BU</span></div>
+            <div class="sidebar-brand-title" data-no-i18n>SIM-<span>BU</span></div>
             <div class="sidebar-brand-sub">Pemda · Bagian Umum</div>
         </div>
         <button type="button" class="sb-toggle" id="sbToggle" aria-label="Ciutkan sidebar" title="Ciutkan / lebarkan sidebar">
@@ -339,7 +412,7 @@ $icons = [
                             <button type="button" class="sb-group-btn" aria-expanded="{{ $hasActive ? 'true' : 'false' }}" title="{{ $meta['label'] }}">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="sb-ico">{!! $icons[$meta['icon']] ?? '' !!}</svg>
                                 <span class="sb-group-label">{{ $meta['label'] }}</span>
-                                <span class="sb-count">{{ $visible->count() }}</span>
+                                <span class="sb-count" data-no-i18n>{{ $visible->count() }}</span>
                                 <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                             </button>
 
@@ -380,6 +453,10 @@ $icons = [
         var collapsed = false;
         var allOpen   = false;
 
+        function isRtl() { return document.body.getAttribute('dir') === 'rtl'; }
+        /* terjemahkan ulang atribut yang diubah lewat JS (aria-label, dst) */
+        function retranslate() { if (window.I18N) window.I18N.apply(sb); }
+
         /* ---------- buka / tutup grup ---------- */
         function setOpen(g, open) {
             g.classList.toggle('open', open);
@@ -396,8 +473,15 @@ $icons = [
             g.classList.add('fly');
             var btn = g.querySelector('.sb-group-btn').getBoundingClientRect();
             var sub = g.querySelector('.sb-sub');
-            sub.style.left = (sb.getBoundingClientRect().right + 6) + 'px';
-            sub.style.top  = btn.top + 'px';
+            var sbRect = sb.getBoundingClientRect();
+            if (isRtl()) {                         /* Arab: flyout keluar ke sisi kiri sidebar */
+                sub.style.left  = 'auto';
+                sub.style.right = (window.innerWidth - sbRect.left + 6) + 'px';
+            } else {
+                sub.style.right = 'auto';
+                sub.style.left  = (sbRect.right + 6) + 'px';
+            }
+            sub.style.top = btn.top + 'px';
             var maxTop = window.innerHeight - sub.offsetHeight - 12;
             if (btn.top > maxTop) sub.style.top = Math.max(12, maxTop) + 'px';
         }
@@ -427,6 +511,7 @@ $icons = [
 
         document.addEventListener('click', function (e) { if (collapsed && !e.target.closest('.sb-group')) closeFly(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFly(); });
+        window.addEventListener('languageChanged', function () { closeFly(); });
 
         /* ---------- ciutkan / lebarkan sidebar ---------- */
         function applyCollapsed(v) {
@@ -435,6 +520,7 @@ $icons = [
             closeFly();
             toggleBtn.setAttribute('aria-label', v ? 'Lebarkan sidebar' : 'Ciutkan sidebar');
             try { localStorage.setItem('simbu_sb_collapsed', v ? '1' : '0'); } catch (e) {}
+            retranslate();
         }
         toggleBtn.addEventListener('click', function () { applyCollapsed(!collapsed); });
         searchWrap.addEventListener('click', function () {
@@ -450,14 +536,16 @@ $icons = [
             allBtn.classList.toggle('on', allOpen);
             allBtn.setAttribute('aria-label', allOpen ? 'Tutup semua grup' : 'Buka semua grup');
             groups.forEach(function (g) { setOpen(g, allOpen); });
+            retranslate();
         });
 
-        /* ---------- cari menu ---------- */
+        /* ---------- cari menu (cocok dengan bahasa yang sedang tampil, juga nama asli Indonesia) ---------- */
         function filter(q) {
             q = q.trim().toLowerCase();
 
             groups.forEach(function (g) {
-                var groupMatch = q && g.getAttribute('data-label').indexOf(q) > -1;
+                var shown = g.querySelector('.sb-group-label').textContent.toLowerCase();
+                var groupMatch = q && (shown.indexOf(q) > -1 || g.getAttribute('data-label').indexOf(q) > -1);
                 var count = 0;
                 [].slice.call(g.querySelectorAll('.sb-subitem')).forEach(function (a) {
                     var m = !q || groupMatch || a.textContent.toLowerCase().indexOf(q) > -1;
@@ -469,7 +557,7 @@ $icons = [
                 if (!q) setOpen(g, g.hasAttribute('data-initial-open'));
             });
 
-            if (dash) dash.hidden = !!q && 'dashboard'.indexOf(q) === -1;
+            if (dash) dash.hidden = !!q && dash.textContent.toLowerCase().indexOf(q) === -1 && 'dashboard'.indexOf(q) === -1;
 
             var anyVisible = false;
             sections.forEach(function (sec) {

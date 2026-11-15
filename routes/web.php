@@ -1,15 +1,23 @@
 <?php
 use Illuminate\Support\Facades\Route;
+
 Route::get('/', fn () => auth()->check() ? redirect()->route('dashboard') : redirect()->route('login'));
+
 require __DIR__.'/auth.php';
+
 Route::middleware(['auth'])->group(function () {
+    // Route untuk fitur terjemahan dinamis (tanpa API)
+    Route::post('/translate-batch', [\App\Http\Controllers\TranslateController::class, 'batch'])->name('translate.batch');
+
     require __DIR__.'/shared.php';
     require __DIR__.'/pegawai.php';
     require __DIR__.'/pejabat.php';
     require __DIR__.'/pengemudi.php';
     require __DIR__.'/auditor.php';
 });
+
 require __DIR__.'/super-admin.php';
+
 foreach ([
     ['admin.persuratan','admin/persuratan','super_admin,admin_persuratan'],
     ['admin.barang-daerah','admin/barang-daerah','super_admin,pengurus_bmd'],
