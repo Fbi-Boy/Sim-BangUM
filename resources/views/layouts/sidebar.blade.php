@@ -8,6 +8,7 @@ $sections = [
     'MENU UTAMA' => ['short'=>'Menu', 'groups'=>[
         'TUGAS' => [
             ['label'=>'Disposisi Saya','route'=>'pegawai.dispositions.index','show'=>$u?->hasAnyRole(['pegawai','admin_persuratan','kasubbag','kepala_bagian','super_admin'])],
+            ['label'=>'Review Hasil Pegawai','route'=>'pejabat.reviews.index','show'=>$u?->hasAnyRole(['kepala_bagian','kasubbag','super_admin'])], // ⬅️ BARU
             ['label'=>'Tugas Saya','route'=>'pengemudi.tasks.index','show'=>$u?->hasRole('pengemudi')],
             ['label'=>'Inbox Persetujuan','route'=>'pejabat.approvals.index','show'=>$u?->hasAnyRole(['kepala_bagian','kasubbag','super_admin'])],
         ],

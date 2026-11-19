@@ -17,3 +17,11 @@ Route::prefix("pegawai")->name("pegawai.")->group(function () {
     Route::get("dispositions/{disposition}", [MyDispositionController::class, "show"])->name("dispositions.show");
     Route::post("dispositions/{disposition}/update", [MyDispositionController::class, "updateStatus"])->name("dispositions.update");
 });
+
+Route::prefix('dispositions')->name('dispositions.')->group(function () {
+    Route::get('/', [MyDispositionController::class, 'index'])->name('index');
+    Route::get('/history', [MyDispositionController::class, 'history'])->name('history');
+    Route::get('/{disposition}', [MyDispositionController::class, 'show'])->name('show');
+    Route::post('/{disposition}/update', [MyDispositionController::class, 'updateStatus'])->name('update');
+    Route::post('/{disposition}/submit', [MyDispositionController::class, 'submitResult'])->name('submit');
+});

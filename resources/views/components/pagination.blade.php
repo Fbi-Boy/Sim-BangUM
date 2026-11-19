@@ -86,7 +86,7 @@
             <span>Tampilkan</span>
             <select class="ajax-per-page" aria-label="Jumlah data per halaman">
                 @foreach ($options as $n)
-                    <option value="{{ request()->fullUrlWithQuery(['per_page' => $n, $pageName => 1]) }}" {{ $n === $current ? 'selected' : '' }}>{{ $n }}</option>
+                    <option value="{{ request()->fullUrlWithQuery(['per_page' => $n, $pageName => 1]) }}" {{ $n === $current ? 'selected' : '' }} data-no-i18n>{{ $n }}</option>
                 @endforeach
             </select>
             <span>{{ $itemLabel }}</span>
@@ -114,9 +114,9 @@
                 @if ($item === '...')
                     <li class="dots" aria-disabled="true"><span>…</span></li>
                 @elseif ($item === $paginator->currentPage())
-                    <li class="active" aria-current="page"><span>{{ $item }}</span></li>
+                    <li class="active" aria-current="page"><span data-page-num="{{ $item }}">{{ $item }}</span></li>
                 @else
-                    <li><a href="{{ $paginator->url($item) }}" aria-label="Halaman {{ $item }}">{{ $item }}</a></li>
+                    <li><a href="{{ $paginator->url($item) }}" aria-label="Halaman {{ $item }}" data-page-num="{{ $item }}">{{ $item }}</a></li>
                 @endif
             @endforeach
 

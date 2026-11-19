@@ -32,7 +32,8 @@ body { font-family: var(--font-main); background: var(--bg-body); color: var(--t
 button, input, select, textarea { font-family: inherit; }
 .wrap { display: flex; min-height: 100vh; }
 
-.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+/* .main = kolom: topbar -> content (tumbuh) -> footer (selalu menempel di dasar) */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 100vh; }
 .topbar {
     position: sticky; top: 0; z-index: 50; height: 68px; padding: 0 28px; gap: 16px;
     display: flex; justify-content: space-between; align-items: center;
@@ -110,10 +111,23 @@ body.dark-mode .btn-icon .i-moon { display: none; }
 }
 .avatar.lg { width: 44px; height: 44px; border-radius: 13px; font-size: 14px; }
 .user-text { min-width: 0; line-height: 1.25; }
-.user-name { font-size: 13px; font-weight: 600; color: var(--text-main); max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.user-role { font-size: 10.5px; font-weight: 500; color: var(--text-muted); max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-name { font-size: 13px; font-weight: 600; color: var(--text-main); max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .user-chev { width: 14px; height: 14px; color: var(--text-muted); transition: transform .25s; flex-shrink: 0; }
 .user-box.open .user-chev { transform: rotate(180deg); color: var(--accent); }
+
+/* RTL: beri ruang lebih untuk teks Arab (biasanya lebih lebar) */
+body[dir="rtl"] .user-text { max-width: 200px; }
+body[dir="rtl"] .user-name { max-width: 200px; }
+body[dir="rtl"] .user-role { max-width: 200px; }
 
 .user-menu {
     position: absolute; right: 0; top: calc(100% + 10px); width: 270px; padding: 8px; z-index: 70;
@@ -136,8 +150,8 @@ body.dark-mode .btn-icon .i-moon { display: none; }
 body.dark-mode .menu-logout:hover { background: rgba(239,68,68,.16); color: #fca5a5; }
 .menu-logout svg { width: 18px; height: 18px; }
 
-.content { padding: 24px 28px; flex: 1; transition: opacity .2s; }
-.footer { text-align: center; padding: 16px; color: var(--text-muted); font-size: 11.5px; border-top: 1px solid var(--border-color); }
+/* konten tumbuh mengisi ruang agar footer selalu di dasar; min-width:0 mencegah tabel lebar mendorong footer keluar */
+.content { padding: 24px 28px; flex: 1 0 auto; min-width: 0; max-width: 100%; transition: opacity .2s; }
 
 .card { background: var(--bg-card); border-radius: 14px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 16px; }
 table { width: 100%; border-collapse: collapse; background: var(--bg-card); font-size: 13.5px; }
@@ -163,6 +177,23 @@ body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
 body[dir="rtl"] input, body[dir="rtl"] select, body[dir="rtl"] textarea { text-align: right; }
 body[dir="rtl"] input[type="email"], body[dir="rtl"] input[type="url"], body[dir="rtl"] input[type="number"] { direction: ltr; text-align: right; }
 body[dir="rtl"] .sidebar { border-right: none; border-left: 1px solid var(--border-color); }
+
+/* --- Penguatan RTL: arah dibuat eksplisit agar sidebar PASTI pindah ke kanan --- */
+html[dir="rtl"], html[dir="rtl"] body { direction: rtl; }
+html[dir="ltr"], html[dir="ltr"] body { direction: ltr; }
+body[dir="rtl"] .wrap, body[dir="rtl"] .main, body[dir="rtl"] .topbar, body[dir="rtl"] .content, body[dir="rtl"] .footer { direction: rtl; }
+body[dir="ltr"] .wrap, body[dir="ltr"] .main, body[dir="ltr"] .topbar, body[dir="ltr"] .content, body[dir="ltr"] .footer { direction: ltr; }
+body[dir="rtl"] .menu-head, body[dir="rtl"] .role-chips, body[dir="rtl"] .menu-logout { direction: rtl; }
+/* panah pagination ikut berbalik arah */
+body[dir="rtl"] .sbp-list svg { transform: scaleX(-1); }
+/* data berhuruf Latin (email, kode, IP, nomor) tetap terbaca kiri-ke-kanan di tengah teks Arab */
+body[dir="rtl"] input[type="email"], body[dir="rtl"] input[type="url"], body[dir="rtl"] input[type="tel"],
+body[dir="rtl"] a[href^="mailto:"], body[dir="rtl"] code,
+body[dir="rtl"] .rm-code, body[dir="rtl"] .ev-no, body[dir="rtl"] .tv-no, body[dir="rtl"] .pt-no,
+body[dir="rtl"] .ku-mail > span, body[dir="rtl"] .al-ip, body[dir="rtl"] .al-act, body[dir="rtl"] .al-time b {
+    direction: ltr; unicode-bidi: isolate;
+}
+/* (gaya footer ada di layouts/footer.blade.php) */
 </style>
 </head>
 <body>
@@ -259,476 +290,17 @@ body[dir="rtl"] .sidebar { border-right: none; border-left: 1px solid var(--bord
             </div>
         </div>
 
-        <!-- KONTEN UTAMA (ID: app-content untuk SPA Router) -->
+        <!-- KONTEN UTAMA -->
         <div class="content" id="app-content">
             @yield('content')
         </div>
 
-        <div class="footer">SIM-BU v1.0 &copy; {{ date('Y') }} <span>Pemda · Bagian Umum</span></div>
+        <!-- FOOTER (file terpisah: resources/views/layouts/footer.blade.php) -->
+        @include('layouts.footer')
     </div>
 </div>
 
-<script>
-/* =====================================================================
-   SISTEM MULTI-BAHASA (i18n) + AUTO-TRANSLATE SERVER
-   ===================================================================== */
-window.I18N = (function () {
-    var DICT = {
-        'Dashboard': ['Dashboard', 'لوحة التحكم', '仪表板'],
-        'Menu': ['Menu', 'القائمة', '菜单'],
-        'Keluar': ['Logout', 'تسجيل الخروج', '退出'],
-        'Simpan': ['Save', 'حفظ', '保存'],
-        'Batal': ['Cancel', 'إلغاء', '取消'],
-        'Tambah Data': ['Add Data', 'إضافة بيانات', '添加数据'],
-        'Cari': ['Search', 'بحث', '搜索'],
-        'Menunggu': ['Pending', 'قيد الانتظار', '待处理'],
-        'Disetujui': ['Approved', 'تمت الموافقة', '已批准'],
-        'Ditolak': ['Rejected', 'مرفوض', '已拒绝'],
-        'Tanpa role': ['No role', 'بدون دور', '无角色'],
-        'Pemda · Bagian Umum': ['Local Government · General Affairs', 'الحكومة المحلية · الشؤون العامة', '地方政府 · 总务部'],
-        'Surat Masuk': ['Incoming Mail', 'البريد الوارد', '收文'],
-        'Surat Keluar': ['Outgoing Mail', 'البريد الصادر', '发文'],
-        'Disposisi': ['Disposition', 'التوجيه', '批示'],
-        'Arsip': ['Archive', 'الأرشيف', '档案'],
-        'Inventaris': ['Inventory', 'المخزون', '库存'],
-        'Aset': ['Assets', 'الأصول', '资产'],
-        'Laporan': ['Reports', 'التقارير', '报告'],
-        'Pengaturan': ['Settings', 'الإعدادات', '设置'],
-        'Profil': ['Profile', 'الملف الشخصي', '个人资料'],
-        'Pengguna': ['Users', 'المستخدمون', '用户'],
-        'Peran': ['Roles', 'الأدوار', '角色'],
-        'Hak Akses': ['Permissions', 'الصلاحيات', '权限'],
-        'Data Master': ['Master Data', 'البيانات الرئيسية', '主数据'],
-        'Pegawai': ['Employees', 'الموظفون', '员工'],
-        'Jabatan': ['Position', 'المنصب', '职位'],
-        'Unit Kerja': ['Work Unit', 'وحدة العمل', '工作单位'],
-        'Bidang': ['Division', 'القسم', '部门'],
-        'Kategori': ['Category', 'الفئة', '类别'],
-        'Jenis': ['Type', 'النوع', '类型'],
-        'Riwayat': ['History', 'السجل', '历史'],
-        'Notifikasi': ['Notifications', 'الإشعارات', '通知'],
-        'Bantuan': ['Help', 'مساعدة', '帮助'],
-        'No': ['No', 'م', '序号'],
-        'No.': ['No.', 'رقم', '编号'],
-        'Nama': ['Name', 'الاسم', '姓名'],
-        'Nama Lengkap': ['Full Name', 'الاسم الكامل', '全名'],
-        'Email': ['Email', 'البريد الإلكتروني', '电子邮件'],
-        'Kata Sandi': ['Password', 'كلمة المرور', '密码'],
-        'Password': ['Password', 'كلمة المرور', '密码'],
-        'Konfirmasi Kata Sandi': ['Confirm Password', 'تأكيد كلمة المرور', '确认密码'],
-        'Telepon': ['Phone', 'الهاتف', '电话'],
-        'Alamat': ['Address', 'العنوان', '地址'],
-        'Tanggal': ['Date', 'التاريخ', '日期'],
-        'Waktu': ['Time', 'الوقت', '时间'],
-        'Status': ['Status', 'الحالة', '状态'],
-        'Aksi': ['Actions', 'الإجراءات', '操作'],
-        'Keterangan': ['Notes', 'ملاحظات', '备注'],
-        'Deskripsi': ['Description', 'الوصف', '描述'],
-        'Perihal': ['Subject', 'الموضوع', '事由'],
-        'Nomor Surat': ['Letter Number', 'رقم الخطاب', '文号'],
-        'Tanggal Surat': ['Letter Date', 'تاريخ الخطاب', '文件日期'],
-        'Pengirim': ['Sender', 'المرسل', '发件人'],
-        'Penerima': ['Recipient', 'المستلم', '收件人'],
-        'Lampiran': ['Attachment', 'المرفق', '附件'],
-        'Jumlah': ['Quantity', 'الكمية', '数量'],
-        'Total': ['Total', 'المجموع', '总计'],
-        'Harga': ['Price', 'السعر', '价格'],
-        'Dibuat': ['Created', 'تاريخ الإنشاء', '创建时间'],
-        'Diperbarui': ['Updated', 'تاريخ التحديث', '更新时间'],
-        'Tambah': ['Add', 'إضافة', '添加'],
-        'Tambah Baru': ['Add New', 'إضافة جديد', '新增'],
-        'Simpan Perubahan': ['Save Changes', 'حفظ التغييرات', '保存更改'],
-        'Hapus': ['Delete', 'حذف', '删除'],
-        'Edit': ['Edit', 'تعديل', '编辑'],
-        'Ubah': ['Edit', 'تعديل', '修改'],
-        'Detail': ['Details', 'التفاصيل', '详情'],
-        'Lihat': ['View', 'عرض', '查看'],
-        'Kembali': ['Back', 'رجوع', '返回'],
-        'Tutup': ['Close', 'إغلاق', '关闭'],
-        'Kirim': ['Send', 'إرسال', '发送'],
-        'Cari...': ['Search...', 'بحث...', '搜索...'],
-        'Filter': ['Filter', 'تصفية', '筛选'],
-        'Reset': ['Reset', 'إعادة تعيين', '重置'],
-        'Ekspor': ['Export', 'تصدير', '导出'],
-        'Impor': ['Import', 'استيراد', '导入'],
-        'Cetak': ['Print', 'طباعة', '打印'],
-        'Unduh': ['Download', 'تنزيل', '下载'],
-        'Unggah': ['Upload', 'رفع', '上传'],
-        'Pilih': ['Select', 'اختيار', '选择'],
-        '-- Pilih --': ['-- Select --', '-- اختر --', '-- 请选择 --'],
-        'Ya': ['Yes', 'نعم', '是'],
-        'Tidak': ['No', 'لا', '否'],
-        'Setuju': ['Approve', 'موافقة', '批准'],
-        'Tolak': ['Reject', 'رفض', '拒绝'],
-        'Selesai': ['Done', 'منتهي', '完成'],
-        'Lanjut': ['Next', 'التالي', '继续'],
-        'Aktif': ['Active', 'نشط', '启用'],
-        'Nonaktif': ['Inactive', 'غير نشط', '停用'],
-        'Diproses': ['Processing', 'قيد المعالجة', '处理中'],
-        'Baru': ['New', 'جديد', '新'],
-        'Tidak ada data': ['No data available', 'لا توجد بيانات', '暂无数据'],
-        'Data tidak ditemukan': ['No data found', 'لم يتم العثور على بيانات', '未找到数据'],
-        'Memuat...': ['Loading...', 'جارٍ التحميل...', '加载中...'],
-        'Berhasil': ['Success', 'تم بنجاح', '成功'],
-        'Gagal': ['Failed', 'فشل', '失败'],
-        'Sebelumnya': ['Previous', 'السابق', '上一页'],
-        'Selanjutnya': ['Next', 'التالي', '下一页'],
-        'Berikutnya': ['Next', 'التالي', '下一页'],
-        'Tampilkan': ['Show', 'عرض', '显示'],
-        'per halaman': ['per page', 'لكل صفحة', '每页'],
-        'Halaman': ['Page', 'صفحة', '页'],
-        'Apakah Anda yakin?': ['Are you sure?', 'هل أنت متأكد؟', '您确定吗?'],
-        'Apakah Anda yakin ingin menghapus data ini?': ['Are you sure you want to delete this data?', 'هل أنت متأكد أنك تريد حذف هذه البيانات؟', '您确定要删除此数据吗?'],
-        'Selamat Datang': ['Welcome', 'مرحباً', '欢迎']
-    };
-
-    var IDX = { en: 0, ar: 1, zh: 2 };
-    var LOWER = {};
-    var cur = 'id';
-    var textStore = new WeakMap();
-    var attrStore = new WeakMap();
-    var ATTRS = ['placeholder', 'title', 'aria-label', 'alt', 'data-short'];
-    var SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, NOSCRIPT: 1, CODE: 1, PRE: 1 };
-    var observer = null, pending = false, applying = false;
-
-    var MISSING = {}, TRIED = {}, fetching = false;
-
-    function rebuildLower() { LOWER = {}; Object.keys(DICT).forEach(function (k) { LOWER[k.toLowerCase()] = DICT[k]; }); }
-    if (window.I18N_EXTRA) Object.keys(window.I18N_EXTRA).forEach(function (k) { DICT[k] = window.I18N_EXTRA[k]; });
-    rebuildLower();
-
-    function norm(s) { return s.replace(/\s+/g, ' ').trim(); }
-    function lookup(s) { var k = norm(s); if (!k) return null; return DICT[k] || LOWER[k.toLowerCase()] || null; }
-
-    function translate(orig, lang) {
-        if (lang === 'id') return orig;
-        var k = norm(orig);
-        var hit = lookup(orig);
-        var t = hit ? hit[IDX[lang]] : null;
-
-        if (!t) {
-            // Jika tidak ada di kamus, catat untuk diterjemahkan ke server (hanya jika ada huruf)
-            if (k && /\p{L}/u.test(k) && k.length <= 1000 && k.length > 2 && !(TRIED[lang] && TRIED[lang][k])) {
-                MISSING[lang] = MISSING[lang] || {};
-                MISSING[lang][k] = 1;
-            }
-            return orig;
-        }
-        var m = orig.match(/^(\s*)[\s\S]*?(\s*)$/);
-        return (m ? m[1] : '') + t + (m ? m[2] : '');
-    }
-
-    function skipNode(el) {
-        while (el && el.nodeType === 1) {
-            if (SKIP[el.tagName] || el.hasAttribute('data-no-i18n')) return true;
-            el = el.parentNode;
-        }
-        return false;
-    }
-
-    function applyTo(root, lang) {
-        if (!root) return;
-        var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-        var n, nodes = [];
-        while ((n = walker.nextNode())) nodes.push(n);
-
-        nodes.forEach(function (node) {
-            if (!node.data.trim() || skipNode(node.parentNode)) return;
-            var rec = textStore.get(node);
-            if (!rec || node.data !== rec.set) rec = { orig: node.data, set: node.data };
-            var out = translate(rec.orig, lang);
-            rec.set = out;
-            textStore.set(node, rec);
-            if (node.data !== out) node.data = out;
-        });
-
-        var els = root.nodeType === 1 ? [root] : [];
-        var q = root.querySelectorAll ? root.querySelectorAll('[placeholder],[title],[aria-label],[alt],[data-short],input[type=submit],input[type=button]') : [];
-        els = els.concat(Array.prototype.slice.call(q));
-        els.forEach(function (el) {
-            if (skipNode(el)) return;
-            var store = attrStore.get(el) || {};
-            var list = ATTRS.slice();
-            if (el.tagName === 'INPUT' && (el.type === 'submit' || el.type === 'button')) list.push('value');
-            list.forEach(function (a) {
-                if (!el.hasAttribute(a)) return;
-                var val = el.getAttribute(a);
-                var rec = store[a];
-                if (!rec || val !== rec.set) rec = { orig: val, set: val };
-                var out = translate(rec.orig, lang);
-                rec.set = out; store[a] = rec;
-                if (val !== out) el.setAttribute(a, out);
-            });
-            attrStore.set(el, store);
-        });
-    }
-
-    function run(root) {
-        applying = true;
-        if (observer) observer.disconnect();
-        try { applyTo(root || document.body, cur); } catch (e) { console.error(e); }
-        startObserver();
-        applying = false;
-        fetchMissing();
-    }
-
-    function startObserver() {
-        if (!observer) {
-            observer = new MutationObserver(function () {
-                if (applying || pending) return;
-                pending = true;
-                requestAnimationFrame(function () { pending = false; run(document.body); });
-            });
-        }
-        observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-    }
-
-    // ===== FUNGSI AJAX KE SERVER =====
-    function fetchMissing() {
-        var lang = cur;
-        if (lang === 'id' || fetching) return;
-
-        var list = Object.keys(MISSING[lang] || {});
-        if (list.length === 0) return;
-
-        var chunk = list.slice(0, 50); // Maksimal 50 teks per request
-        fetching = true;
-
-        var tk = document.querySelector('meta[name="csrf-token"]');
-        var token = tk ? tk.content : '';
-
-        fetch('/translate-batch', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': token,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({ lang: lang, texts: chunk })
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (res) {
-            TRIED[lang] = TRIED[lang] || {};
-            chunk.forEach(function(k){
-                delete MISSING[lang][k];
-                TRIED[lang][k] = 1;
-            });
-
-            var newDict = {};
-            var tr = res.translations || {};
-            Object.keys(tr).forEach(function (orig) {
-                var arr = ['', '', ''];
-                arr[IDX[lang]] = tr[orig];
-                newDict[orig] = arr;
-            });
-            I18N.extend(newDict);
-
-            fetching = false;
-            // Jika masih ada sisa teks, lanjut translate setelah 1 detik
-            if (Object.keys(MISSING[lang] || {}).length > 0) {
-                setTimeout(fetchMissing, 1000);
-            }
-        })
-        .catch(function () {
-            chunk.forEach(function(k){ TRIED[lang][k] = 1; });
-            fetching = false;
-        });
-    }
-
-    var LOCALES = { id: 'id-ID', en: 'en-US', ar: 'ar-EG', zh: 'zh-CN' };
-    function updateDate() {
-        var el = document.getElementById('tb-date');
-        if (!el) return;
-        try { el.textContent = new Date().toLocaleDateString(LOCALES[cur] || 'id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) {}
-    }
-
-    function set(lang) {
-        if (!LOCALES[lang]) lang = 'id';
-        cur = lang;
-        try { localStorage.setItem('lang', lang); } catch (e) {}
-        var rtl = lang === 'ar';
-        document.body.setAttribute('dir', rtl ? 'rtl' : 'ltr');
-        document.body.setAttribute('data-lang', lang);
-        document.documentElement.setAttribute('dir', rtl ? 'rtl' : 'ltr');
-        document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : lang);
-
-        var code = document.getElementById('langCur');
-        if (code) code.textContent = lang.toUpperCase();
-        document.querySelectorAll('.lang-item').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-lang') === lang); });
-
-        updateDate();
-        TRIED = {}; // Reset agar bisa fetch ulang jika ada update
-        run(document.body);
-        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: lang, rtl: rtl } }));
-    }
-
-    function init() {
-        try { cur = localStorage.getItem('lang') || 'id'; } catch (e) { cur = 'id'; }
-        if (!LOCALES[cur]) cur = 'id';
-        set(cur);
-    }
-
-    return {
-        set: set, init: init, apply: run, get: function () { return cur; },
-        extend: function (obj) { Object.keys(obj).forEach(function (k) { DICT[k] = obj[k]; }); rebuildLower(); run(document.body); },
-        t: function (idText) { return translate(idText, cur); }
-    };
-})();
-
-// ========== THEME & LANGUAGE ==========
-function toggleTheme() { var dark = document.body.classList.toggle('dark-mode'); try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {} }
-function setLanguage(lang) {
-    var langBox = document.getElementById('langBox');
-    if(langBox) langBox.classList.remove('open');
-    I18N.set(lang);
-}
-
-var langBox = document.getElementById('langBox');
-if(langBox) {
-    document.getElementById('langBtn').addEventListener('click', function (e) { e.stopPropagation(); langBox.classList.toggle('open'); });
-}
-document.addEventListener('click', function (e) { if (langBox && !langBox.contains(e.target)) langBox.classList.remove('open'); });
-(function () { var box = document.getElementById('userBox'); if(!box) return; var btn = document.getElementById('userBtn'); btn.addEventListener('click', function (e) { e.stopPropagation(); box.classList.toggle('open'); }); document.addEventListener('click', function (e) { if (!box.contains(e.target)) box.classList.remove('open'); }); })();
-
-I18N.init();
-
-// ========== PROGRESS BAR ==========
-window.showProgress = function() {
-    var bar = document.getElementById('nprogress-bar');
-    if(bar) { bar.style.width = '30%'; setTimeout(function() { bar.style.width = '70%'; }, 200); }
-};
-window.hideProgress = function() {
-    var bar = document.getElementById('nprogress-bar');
-    if(bar) { bar.style.width = '100%'; setTimeout(function() { bar.style.width = '0%'; }, 300); }
-};
-
-// ========== RE-EXECUTE SCRIPTS AFTER SPA NAVIGATION ==========
-window.runScripts = function(container) {
-    var scripts = container.querySelectorAll('script');
-    scripts.forEach(function(oldScript) {
-        var newScript = document.createElement('script');
-        Array.from(oldScript.attributes).forEach(function(attr) {
-            newScript.setAttribute(attr.name, attr.value);
-        });
-        newScript.textContent = oldScript.textContent;
-        oldScript.parentNode.replaceChild(newScript, oldScript);
-    });
-};
-
-// ========== SPA ROUTER (Navigasi Tanpa Refresh) ==========
-document.addEventListener('DOMContentLoaded', function() {
-    document.body.addEventListener('click', function(e) {
-        var link = e.target.closest('a');
-        if (!link || !link.getAttribute('href')) return;
-        var href = link.getAttribute('href');
-        if (href === '#' || href.startsWith('#') || link.getAttribute('target') === '_blank' || href.indexOf('logout') > -1 || link.hasAttribute('download')) return;
-
-        var url = new URL(link.href);
-        if (url.origin !== window.location.origin) return;
-
-        if (link.closest('.sidebar') || link.closest('.topbar') || link.classList.contains('quick-card')) {
-            e.preventDefault();
-            navigateTo(url.href);
-        }
-    });
-
-    window.addEventListener('popstate', function() {
-        navigateTo(window.location.href, false);
-    });
-
-    window.navigateTo = function(url, pushState) {
-        if (pushState === undefined) pushState = true;
-        var content = document.getElementById('app-content');
-        if (!content) { window.location.href = url; return; }
-
-        showProgress();
-        content.style.opacity = '0.4';
-
-        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-            var parser = new DOMParser();
-            var doc = parser.parseFromString(html, 'text/html');
-
-            var newContent = doc.getElementById('app-content');
-            var newTitle = doc.querySelector('title');
-            var newTopbarTitle = doc.querySelector('.topbar-title');
-
-            if (newContent) {
-                content.innerHTML = newContent.innerHTML;
-                content.style.opacity = '1';
-
-                if (newTitle) document.title = newTitle.innerText;
-                if (newTopbarTitle) document.getElementById('topbar-title').innerText = newTopbarTitle.innerText;
-
-                if (pushState) window.history.pushState({}, '', url);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                runScripts(content);
-                I18N.apply(document.body);
-            } else {
-                window.location.href = url;
-            }
-            hideProgress();
-        })
-        .catch(function(err) {
-            console.error(err);
-            window.location.href = url;
-        });
-    };
-});
-
-// ========== AJAX PAGINATION ==========
-document.addEventListener("DOMContentLoaded", function() {
-    document.body.addEventListener('click', function(e) {
-        var link = e.target.closest('.sbp-list a');
-        if (link && link.getAttribute('href') && link.getAttribute('href') !== '#') {
-            e.preventDefault();
-            loadAjaxPage(link.getAttribute('href'));
-        }
-    });
-
-    document.body.addEventListener('change', function(e) {
-        if (e.target.classList.contains('ajax-per-page')) {
-            loadAjaxPage(e.target.value);
-        }
-    });
-
-    window.loadAjaxPage = function(url) {
-        var container = document.getElementById('ajax-table-container') || document.querySelector('.table-card');
-        if (!container) return;
-
-        showProgress();
-        container.style.opacity = '0.4';
-        container.style.pointerEvents = 'none';
-
-        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-            var parser = new DOMParser();
-            var doc = parser.parseFromString(html, 'text/html');
-            var newContent = doc.getElementById('ajax-table-container') || doc.querySelector('.table-card');
-
-            if (newContent && container) {
-                container.innerHTML = newContent.innerHTML;
-                container.style.opacity = '1';
-                container.style.pointerEvents = 'auto';
-                window.history.pushState({}, '', url);
-
-                runScripts(container);
-                I18N.apply(container);
-            }
-            hideProgress();
-        })
-        .catch(function(error) {
-            console.error('Error:', error);
-            container.style.opacity = '1';
-            container.style.pointerEvents = 'auto';
-            hideProgress();
-        });
-    };
-});
-</script>
+<!-- PANGGIL FILE JS DI SINI -->
+<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

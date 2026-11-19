@@ -27,17 +27,18 @@ class IncomingLetterController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi Input (Termasuk File)
         $data = $request->validate([
             'sender_name' => 'required|string|max:180',
             'subject' => 'required|string|max:250',
             'letter_date' => 'nullable|date',
             'external_letter_number' => 'nullable|string|max:120',
             'summary' => 'nullable|string',
-            'document' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240', // Maks 10MB
+            'document' => 'nullable|array',
+            'document.*' => 'file|mimes:pdf,jpg,jpeg,png,doc,docx|max:10240',
         ]);
 
-        // 2. Buat nomor agenda otomatis
+        unset($data['document']);
+
         $year = now()->year;
         $seq = (IncomingLetter::where('register_year', $year)->max('agenda_sequence') ?? 0) + 1;
         $data['register_year'] = $year;
@@ -46,32 +47,32 @@ class IncomingLetterController extends Controller
         $data['registered_by_user_id'] = Auth::id();
         $data['status'] = 'registered';
 
-        // 3. Simpan Surat
         $letter = IncomingLetter::create($data);
 
-        // 4. Proses Upload File (Jika Ada)
+        $uploadedCount = 0;
         if ($request->hasFile('document')) {
-            $file = $request->file('document');
-            $path = $file->store('letters/' . $letter->id, 'local'); // Simpan di storage private
-
-            Document::create([
-                'title' => $file->getClientOriginalName(),
-                'documentable_type' => IncomingLetter::class,
-                'documentable_id' => $letter->id,
-                'disk' => 'local',
-                'path' => $path,
-                'original_filename' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'file_size_bytes' => $file->getSize(),
-                'uploaded_by_user_id' => Auth::id(),
-            ]);
+            foreach ($request->file('document') as $file) {
+                if (! $file->isValid()) continue;
+                $path = $file->store('letters/' . $letter->id, 'local');
+                Document::create([
+                    'title' => $file->getClientOriginalName(),
+                    'documentable_type' => IncomingLetter::class,
+                    'documentable_id' => $letter->id,
+                    'disk' => 'local',
+                    'path' => $path,
+                    'original_filename' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'file_size_bytes' => $file->getSize(),
+                    'uploaded_by_user_id' => Auth::id(),
+                ]);
+                $uploadedCount++;
+            }
         }
 
-        // 5. Catat Log & Redirect
-        ActivityLogger::log('letter.incoming.created', $letter, 'Surat masuk: ' . $letter->subject);
+        ActivityLogger::log('letter.incoming.created', $letter, 'Surat masuk: ' . $letter->subject . ' · ' . $uploadedCount . ' lampiran');
 
         return redirect()->route('admin.persuratan.incoming-letters.show', $letter)
-            ->with('success', 'Surat berhasil didaftarkan beserta lampirannya.');
+            ->with('success', 'Surat terdaftar dengan ' . $uploadedCount . ' lampiran.');
     }
 
     public function show(IncomingLetter $incomingLetter)
