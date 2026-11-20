@@ -682,6 +682,72 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.addEventListener('popstate', function () { navigateTo(window.location.href, false); });
 
+    /* =====================================================================
+   SIDEBAR ACTIVE SYNC — Update highlight setelah SPA navigation
+   ===================================================================== */
+window.updateSidebarActive = function () {
+    var sidebar = document.querySelector('.sidebar');
+    if (!sidebar) return;
+
+    var path = window.location.pathname;
+    var currentLink = null;
+    var currentLen = -1;
+
+    // 1. Reset semua active
+    sidebar.querySelectorAll('.sidebar-item.active, .sb-subitem.active').forEach(function (el) {
+        el.classList.remove('active');
+    });
+
+    // 2. Cari link yang paling cocok (path terpanjang)
+    sidebar.querySelectorAll('a[href]').forEach(function (a) {
+        try {
+            var url = new URL(a.href);
+            var linkPath = url.pathname;
+
+            // Match exact atau sub-path
+            var match = (linkPath === path)
+                || (linkPath !== '/' && path.startsWith(linkPath + '/'))
+                || (linkPath !== '/' && path === linkPath.replace(/\/$/, ''));
+
+            if (!match) return;
+
+            // Pilih yang path-nya paling panjang (paling spesifik)
+            if (linkPath.length > currentLen) {
+                currentLen = linkPath.length;
+                currentLink = a;
+            }
+        } catch (e) {}
+    });
+
+    if (!currentLink) return;
+
+    // 3. Set active
+    currentLink.classList.add('active');
+
+    // 4. Kalau di dalam grup, buka grup-nya (accordion style)
+    var group = currentLink.closest('.sb-group');
+    if (group) {
+        // Tutup grup lain
+        sidebar.querySelectorAll('.sb-group.open').forEach(function (g) {
+            if (g !== group) {
+                g.classList.remove('open', 'has-active');
+                var btn = g.querySelector('.sb-group-btn');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Buka grup aktif
+        group.classList.add('open', 'has-active');
+        var groupBtn = group.querySelector('.sb-group-btn');
+        if (groupBtn) groupBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    // 5. Scroll ke menu aktif (kalau ada di luar viewport)
+    setTimeout(function () {
+        currentLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }, 100);
+};
+
     window.navigateTo = function (url, pushState) {
         if (pushState === undefined) pushState = true;
         var content = document.getElementById('app-content');
@@ -698,7 +764,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var newTitle = doc.querySelector('title');
                 var newTopbarTitle = doc.querySelector('.topbar-title');
 
-                if (newContent) {
+                                if (newContent) {
                     content.innerHTML = newContent.innerHTML;
                     content.style.opacity = '1';
                     if (newTitle) document.title = newTitle.innerText;
@@ -707,6 +773,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     runScripts(content);
                     I18N.apply();
+                    window.updateSidebarActive();  // ⬅️ TAMBAH INI
                 } else {
                     window.location.href = url;
                 }

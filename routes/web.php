@@ -1,34 +1,50 @@
+
 <?php
+
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\TranslateController;
 
-Route::get('/', fn () => auth()->check() ? redirect()->route('dashboard') : redirect()->route('login'));
-
-require __DIR__.'/auth.php';
-
-Route::middleware(['auth'])->group(function () {
-    // Route untuk fitur terjemahan dinamis (tanpa API)
-    Route::post('/translate-batch', [\App\Http\Controllers\TranslateController::class, 'batch'])->name('translate.batch');
-
-    require __DIR__.'/shared.php';
-    require __DIR__.'/pegawai.php';
-    require __DIR__.'/pejabat.php';
-    require __DIR__.'/pengemudi.php';
-    require __DIR__.'/auditor.php';
+Route::get('/', function () {
+    return Auth::check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
 });
 
-require __DIR__.'/super-admin.php';
+require __DIR__ . '/auth.php';
+
+Route::middleware(['auth'])->group(function () {
+
+    // Terjemahan dinamis
+    Route::post(
+        '/translate-batch',
+        [TranslateController::class, 'batch']
+    )->name('translate.batch');
+
+    require __DIR__ . '/shared.php';
+    require __DIR__ . '/pegawai.php';
+    require __DIR__ . '/pejabat.php';
+    require __DIR__ . '/pengemudi.php';
+    require __DIR__ . '/auditor.php';
+});
+
+require __DIR__ . '/super-admin.php';
 
 foreach ([
-    ['admin.persuratan','admin/persuratan','super_admin,admin_persuratan'],
-    ['admin.barang-daerah','admin/barang-daerah','super_admin,pengurus_bmd'],
-    ['admin.arsip','admin/arsip','super_admin,petugas_arsip'],
-    ['admin.inventaris','admin/inventaris','super_admin,admin_inventaris'],
-    ['admin.kendaraan','admin/kendaraan','super_admin,admin_kendaraan'],
-    ['admin.fasilitas','admin/fasilitas','super_admin,admin_fasilitas'],
-    ['admin.protokol','admin/protokol','super_admin,admin_protokol'],
-    ['admin.perjalanan-dinas','admin/perjalanan-dinas','super_admin,admin_perjalanan_dinas'],
-] as [$name,$prefix,$roles]) {
-    Route::middleware(['auth',"role:{$roles}"])
-        ->prefix($prefix)->name("{$name}.")
-        ->group(fn () => require __DIR__."/{$prefix}.php");
+    ['admin.persuratan', 'admin/persuratan', 'super_admin,admin_persuratan'],
+    ['admin.barang-daerah', 'admin/barang-daerah', 'super_admin,pengurus_bmd'],
+    ['admin.arsip', 'admin/arsip', 'super_admin,petugas_arsip'],
+    ['admin.inventaris', 'admin/inventaris', 'super_admin,admin_inventaris'],
+    ['admin.kendaraan', 'admin/kendaraan', 'super_admin,admin_kendaraan'],
+    ['admin.fasilitas', 'admin/fasilitas', 'super_admin,admin_fasilitas'],
+    ['admin.protokol', 'admin/protokol', 'super_admin,admin_protokol'],
+    ['admin.perjalanan-dinas', 'admin/perjalanan-dinas', 'super_admin,admin_perjalanan_dinas'],
+] as [$name, $prefix, $roles]) {
+
+    Route::middleware(['auth', "role:{$roles}"])
+        ->prefix($prefix)
+        ->name("{$name}.")
+        ->group(function () use ($prefix) {
+            require __DIR__ . "/{$prefix}.php";
+        });
 }
