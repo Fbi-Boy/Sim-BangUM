@@ -1,58 +1,165 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIM-BangUM
+### Sistem Informasi Manajemen Bagian Umum
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 13">
+  <img src="https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.3+">
+  <img src="https://img.shields.io/badge/Database-MySQL%20%7C%20SQLite-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="Database">
+  <img src="https://img.shields.io/badge/Frontend-Vite%20%7C%20Tailwind-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
 </p>
 
-## About Laravel
+<p align="center">
+  Aplikasi web untuk mendukung digitalisasi administrasi, pelayanan, dan operasional Bagian Umum melalui satu sistem yang terintegrasi.
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tentang Aplikasi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**SIM-BangUM (Sistem Informasi Manajemen Bagian Umum)** adalah aplikasi berbasis web yang dirancang untuk membantu proses administrasi dan operasional Bagian Umum. Sistem menyediakan ruang kerja sesuai peran pengguna, sehingga pegawai dapat mengajukan kebutuhan, pejabat dapat melakukan pemeriksaan dan persetujuan, petugas mengelola bidangnya, serta auditor dapat mengakses laporan.
 
-## Learning Laravel
+Aplikasi menggunakan mekanisme autentikasi dan otorisasi berbasis role. Setelah pengguna masuk, sistem mengarahkan pengguna ke dashboard sesuai role yang dimiliki.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Preview Aplikasi
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+> Ganti gambar placeholder berikut dengan screenshot aktual aplikasi. Simpan file gambar pada direktori `docs/images/` menggunakan nama file yang sama.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Halaman Login
 
-## Agentic Development
+<p align="center">
+  <img src="docs/images/login.png" alt="Screenshot halaman login SIM-BangUM" width="900">
+</p>
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+<p align="center"><sub>Halaman autentikasi pengguna SIM-BangUM.</sub></p>
 
-```bash
-composer require laravel/boost --dev
+### Dashboard
 
-php artisan boost:install
+<p align="center">
+  <img src="docs/images/dashboard.png" alt="Screenshot dashboard SIM-BangUM" width="900">
+</p>
+
+<p align="center"><sub>Dashboard aplikasi setelah pengguna berhasil masuk.</sub></p>
+
+## Modul dan Fitur
+
+| Modul | Deskripsi |
+|---|---|
+| Manajemen Pengguna & Role | Pengelolaan pengguna, penetapan role, dan hak akses. |
+| Persuratan | Pengelolaan surat masuk, surat keluar, disposisi, dan dokumen surat. |
+| Kearsipan | Pengelolaan klasifikasi arsip, data arsip, serta unggah dan unduh dokumen. |
+| Inventaris | Pengelolaan aset, peminjaman aset, item persediaan, dan permintaan stok. |
+| Barang Milik Daerah (BMD) | Pencatatan dan pengelolaan data aset barang daerah. |
+| Kendaraan | Pengajuan dan pengelolaan permintaan kendaraan dinas. |
+| Fasilitas & Ruangan | Pengajuan dan pengelolaan pemesanan ruangan. |
+| Perjalanan Dinas | Pengajuan dan pengelolaan perjalanan dinas. |
+| Protokol | Ruang pengelolaan kebutuhan kegiatan/protokol. |
+| Persetujuan & Disposisi | Pemeriksaan, persetujuan, penolakan, dan tindak lanjut permintaan atau disposisi. |
+| Tugas Pengemudi | Daftar tugas, konfirmasi, keberangkatan, dan penyelesaian perjalanan. |
+| Laporan & Audit | Akses laporan operasional dan ekspor data laporan. |
+| Activity Log | Riwayat aktivitas untuk kebutuhan pemantauan administrator. |
+
+*Daftar di atas merangkum modul yang terlihat dari struktur routing aplikasi. Ketersediaan tindakan pada setiap modul mengikuti implementasi dan hak akses masing-masing role.*
+
+## Role Pengguna
+
+Sistem memiliki dashboard dan akses yang disesuaikan dengan role berikut:
+
+| Role | Tanggung Jawab / Area Kerja |
+|---|---|
+| `super_admin` | Administrasi sistem, pengguna, role, dan pemantauan aktivitas. |
+| `pegawai` | Pengajuan layanan dan kebutuhan operasional serta tindak lanjut disposisi. |
+| `kepala_bagian` | Dashboard pejabat, pemeriksaan persetujuan, dan review disposisi. |
+| `kasubbag` | Dashboard pejabat, pemeriksaan persetujuan, dan review disposisi. |
+| `pengemudi` | Pengelolaan dan pembaruan status tugas perjalanan. |
+| `auditor` | Akses laporan dan data untuk kebutuhan audit. |
+| `admin_persuratan` | Pengelolaan surat masuk dan surat keluar. |
+| `petugas_arsip` | Pengelolaan arsip dan dokumen. |
+| `admin_inventaris` | Pengelolaan aset inventaris, peminjaman, dan persediaan. |
+| `pengurus_bmd` | Pengelolaan barang milik daerah. |
+| `admin_kendaraan` | Pengelolaan administrasi kendaraan. |
+| `admin_fasilitas` | Pengelolaan fasilitas dan ruangan. |
+| `admin_protokol` | Pengelolaan kebutuhan protokol. |
+| `admin_perjalanan_dinas` | Pengelolaan administrasi perjalanan dinas. |
+
+## Teknologi
+
+| Teknologi | Kegunaan |
+|---|---|
+| PHP 8.3+ | Bahasa pemrograman backend |
+| Laravel 13 | Framework aplikasi web |
+| MySQL / SQLite | Database (sesuai konfigurasi environment) |
+| Blade | Template antarmuka |
+| Tailwind CSS | Styling antarmuka |
+| Vite | Build tool frontend |
+| Alpine.js | Interaksi antarmuka |
+| Flatpickr | Komponen pemilihan tanggal |
+
+## Struktur Dokumentasi
+
+```text
+Sim-BangUM/
+├── app/                  # Controller, model, middleware, dan logic aplikasi
+├── database/             # Migration, factory, dan seeder
+├── docs/
+│   └── images/           # Screenshot aplikasi
+├── public/               # Asset publik dan hasil build frontend
+├── resources/
+│   ├── views/            # Halaman Blade
+│   ├── css/              # Sumber CSS
+│   └── js/               # Sumber JavaScript
+├── routes/               # Definisi route aplikasi
+├── README.md             # Dokumentasi utama
+└── INSTALL.md            # Panduan instalasi lokal
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Instalasi
 
-## Contributing
+Ikuti panduan instalasi untuk menyiapkan aplikasi pada komputer atau server lokal.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**[Buka Panduan Instalasi (INSTALL.md)](INSTALL.md)**
 
-## Code of Conduct
+Ringkasan perintah:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+git clone https://github.com/Fbi-Boy/Sim-BangUM.git
+cd Sim-BangUM
+composer install
+npm install
+```
 
-## Security Vulnerabilities
+Lanjutkan konfigurasi file environment, database, migrasi, dan build frontend sesuai panduan instalasi.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Menjalankan Mode Development
 
-## License
+Buka terminal pada direktori proyek, lalu jalankan server Laravel:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan serve
+```
+
+Pada terminal terpisah, jalankan Vite:
+
+```bash
+npm run dev
+```
+
+Akses aplikasi melalui alamat yang ditampilkan oleh Laravel Development Server, umumnya:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Catatan Pengembangan
+
+- Jangan mengunggah file `.env`, kredensial, atau data sensitif ke repository.
+- Pastikan role pengguna sudah sesuai sebelum menguji dashboard dan menu.
+- Gunakan migration untuk menyelaraskan struktur database.
+- Simpan screenshot dokumentasi pada `docs/images/`.
+- Untuk panduan konfigurasi lengkap, lihat [INSTALL.md](INSTALL.md).
+
+---
+
+<p align="center">
+  <strong>SIM-BangUM</strong><br>
+  Digitalisasi Administrasi dan Operasional Bagian Umum
+</p>
