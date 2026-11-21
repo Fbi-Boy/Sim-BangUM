@@ -1,45 +1,39 @@
+<!-- Header -->
+<div align="center">
+
 # SIM-BangUM
+
 ### Sistem Informasi Manajemen Bagian Umum
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 13">
-  <img src="https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.3+">
-  <img src="https://img.shields.io/badge/Frontend-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
-  <img src="https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/Database-MySQL%20%7C%20SQLite-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="Database">
-</p>
+**Satu platform untuk mengelola administrasi, layanan, dan operasional Bagian Umum secara terintegrasi.**
 
-<p align="center">
-  <strong>Aplikasi manajemen administrasi dan operasional Bagian Umum dalam satu platform digital.</strong>
-</p>
+<br>
+
+![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=flat-square&logo=php&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-Frontend-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-UI-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Database](https://img.shields.io/badge/MySQL%20%7C%20SQLite-Database-4479A1?style=flat-square&logo=mysql&logoColor=white)
+
+[Ringkasan](#gambaran-umum) · [Preview](#preview-aplikasi) · [Modul](#modul-aplikasi) · [Teknologi](#teknologi) · [Instalasi](#instalasi)
+
+</div>
 
 ---
 
 ## Gambaran Umum
 
-**SIM-BangUM (Sistem Informasi Manajemen Bagian Umum)** merupakan aplikasi berbasis web untuk mendukung digitalisasi proses administrasi dan operasional Bagian Umum. Aplikasi ini menyediakan pengelolaan layanan, dokumen, inventaris, fasilitas, serta alur pengajuan dan persetujuan melalui sistem yang terintegrasi.
+**SIM-BangUM** merupakan aplikasi berbasis web untuk mendukung digitalisasi proses administrasi dan operasional Bagian Umum. Sistem ini mengintegrasikan pengelolaan persuratan, arsip, inventaris, fasilitas, perjalanan dinas, serta proses pengajuan dan persetujuan.
 
-Akses aplikasi disesuaikan dengan peran pengguna (*role-based access control*). Setiap pengguna memperoleh dashboard dan menu kerja sesuai tanggung jawabnya.
+Akses aplikasi menerapkan *role-based access control* sehingga dashboard dan menu yang tersedia menyesuaikan tanggung jawab setiap pengguna.
 
 ## Preview Aplikasi
 
-<!-- Simpan screenshot aktual pada docs/images/ dengan nama login.png dan dashboard.png. -->
+<!-- Letakkan screenshot aktual pada docs/images/ dengan nama login.png dan dashboard.png. -->
 
-### Halaman Login
-
-<p align="center">
-  <img src="docs/images/login.png" alt="Preview halaman login SIM-BangUM" width="900">
-</p>
-
-<p align="center"><sub>Halaman autentikasi pengguna SIM-BangUM.</sub></p>
-
-### Dashboard
-
-<p align="center">
-  <img src="docs/images/dashboard.png" alt="Preview dashboard SIM-BangUM" width="900">
-</p>
-
-<p align="center"><sub>Dashboard utama setelah pengguna berhasil masuk ke sistem.</sub></p>
+| Halaman Login | Dashboard |
+|:---:|:---:|
+| <img src="docs/images/login.png" alt="Halaman Login SIM-BangUM" width="100%"> | <img src="docs/images/dashboard.png" alt="Dashboard SIM-BangUM" width="100%"> |
 
 ## Modul Aplikasi
 
@@ -116,155 +110,40 @@ Sim-BangUM/
 
 ---
 
-## Instalasi dan Konfigurasi Lokal
+## Instalasi
 
-Panduan ini digunakan untuk menjalankan SIM-BangUM pada lingkungan pengembangan lokal seperti **Laragon, XAMPP, atau PHP development environment**.
+1. **Clone repository**
+   ```bash
+   git clone https://github.com/Fbi-Boy/Sim-BangUM.git
+   cd Sim-BangUM
+   ```
 
-### 1. Persyaratan Sistem
+2. **Install dependensi**
+   ```bash
+   composer install
+   npm install
+   ```
 
-Pastikan perangkat telah memiliki:
+3. **Siapkan environment dan database**  
+   Salin `.env.example` menjadi `.env`, lalu sesuaikan konfigurasi database.
 
-- PHP **8.3 atau lebih baru**.
-- Composer.
-- Node.js dan npm.
-- MySQL/MariaDB atau SQLite.
-- Git.
+4. **Jalankan aplikasi**
+   ```bash
+   php artisan key:generate
+   php artisan migrate --seed
+   npm run build
+   php artisan serve
+   ```
 
-Periksa instalasi melalui terminal:
+Buka **http://127.0.0.1:8000** melalui browser.
 
-```bash
-php -v
-composer -V
-node -v
-npm -v
-git --version
-```
-
-### 2. Clone Repository
-
-```bash
-git clone https://github.com/Fbi-Boy/Sim-BangUM.git
-cd Sim-BangUM
-```
-
-### 3. Install Dependensi
-
-Install dependensi backend dan frontend:
-
-```bash
-composer install
-npm install
-```
-
-### 4. Siapkan File Environment
-
-Salin .env.example menjadi .env.
-
-**Windows PowerShell:**
-
-```powershell
-Copy-Item .env.example .env
-```
-
-**Linux / macOS / Git Bash:**
-
-```bash
-cp .env.example .env
-```
-
-### 5. Konfigurasi Database
-
-Buka file .env dan sesuaikan konfigurasi aplikasi.
-
-Contoh konfigurasi MySQL:
-
-```env
-APP_NAME="SIM-BangUM"
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://127.0.0.1:8000
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=sim_bangum
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-Buat database kosong bernama sim_bangum melalui phpMyAdmin atau MySQL. Sesuaikan nama database, username, dan password dengan konfigurasi lokal masing-masing.
-
-**Alternatif SQLite:** File .env.example menggunakan SQLite secara default. Jika memilih SQLite, pastikan file database/database.sqlite tersedia dan gunakan DB_CONNECTION=sqlite. Tidak perlu membuat database MySQL.
-
-### 6. Generate Application Key
-
-```bash
-php artisan key:generate
-```
-
-### 7. Migrasi Database dan Data Demo
-
-Jalankan migration untuk membuat tabel sekaligus seeder untuk mengisi data awal:
-
-```bash
-php artisan migrate --seed
-```
-
-Seeder demo menyediakan akun pengujian berikut:
-
-| Role | Email | Password |
-|---|---|---|
-| Super Admin | admin@sim-bu.local | password |
-| Kepala Bagian | kaban@sim-bu.local | password |
-| Kasubbag | kasubbag@sim-bu.local | password |
-| Pegawai | pegawai1@sim-bu.local | password |
-| Pegawai | pegawai2@sim-bu.local | password |
-| Auditor | auditor@sim-bu.local | password |
-
-> **Catatan keamanan:** Akun di atas hanya untuk pengembangan dan pengujian lokal. Jangan gunakan kredensial demo pada server produksi. Ganti password dan tinjau data demo sebelum aplikasi dipublikasikan.
-
-### 8. Build Asset Frontend
-
-```bash
-npm run build
-```
-
-### 9. Jalankan Aplikasi
-
-Jalankan server Laravel:
-
-```bash
-php artisan serve
-```
-
-Buka aplikasi melalui browser:
-
-```text
-http://127.0.0.1:8000
-```
-
-Untuk pengembangan antarmuka dengan Vite, jalankan perintah berikut pada terminal terpisah:
-
-```bash
-npm run dev
-```
-
-### 10. Perintah Pengembangan Tambahan
-
-| Perintah | Fungsi |
-|---|---|
-| php artisan migrate:status | Memeriksa status migration |
-| php artisan migrate:fresh --seed | Membuat ulang seluruh tabel dan data demo |
-| php artisan optimize:clear | Membersihkan cache aplikasi |
-| php artisan route:list | Melihat daftar route |
-| php artisan test | Menjalankan pengujian aplikasi |
-| npm run build | Build asset frontend |
-
-> **Perhatian:** Perintah migrate:fresh --seed menghapus seluruh tabel dan data pada database yang sedang digunakan. Gunakan hanya pada database pengembangan.
+> Seeder menyediakan akun demo dengan password `password`. Gunakan hanya untuk pengembangan lokal, bukan produksi.
 
 ---
 
-<p align="center">
-  <strong>SIM-BangUM</strong><br>
-  Sistem Informasi Manajemen Bagian Umum
-</p>
+<div align="center">
+
+**SIM-BangUM**  
+*Sistem Informasi Manajemen Bagian Umum*
+
+</div>
